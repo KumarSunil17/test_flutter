@@ -42,15 +42,9 @@ class HomeScreenState extends State<HomeScreen> {
                       child:  Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                           CircleAvatar(
-                              backgroundColor: Colors.transparent,
-                              child:  Container(
-                                child: Image.asset('image.jpg',width: 500.0,height: 500.0,)
-                            ),
-                            radius: 2.0,
-                          ),
+                           Image.asset('image.jpg',width: 200.0,height: 200.0,),
                            Padding(
-                            padding: const EdgeInsets.only(top: 10.0),
+                            padding: EdgeInsets.only(top: 10.0),
                           ),
                           Text('welcome')
                         ],
