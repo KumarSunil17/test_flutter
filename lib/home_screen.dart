@@ -16,7 +16,7 @@ class HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     Timer(
-        Duration(seconds: 3),
+        Duration(seconds: 0),
             () {
             Navigator.of(context).pushReplacementNamed('/TableScreen');
         }
@@ -45,7 +45,7 @@ class HomeScreenState extends State<HomeScreen> {
                            CircleAvatar(
                               backgroundColor: Colors.transparent,
                               child:  Container(
-                                child: Image.asset('image.jpg',width: 200.0,height: 200.0,)
+                                child: Image.asset('image.jpg',width: 500.0,height: 500.0,)
                             ),
                             radius: 2.0,
                           ),
