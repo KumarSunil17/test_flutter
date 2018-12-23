@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
 
-class TableScreen extends StatelessWidget {
-
+class TableScreen extends StatefulWidget {
   static final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
+  @override
+  TableScreenState createState() {
+    return new TableScreenState();
+  }
+}
 
+class TableScreenState extends State<TableScreen> {
+  int row=-1,col=-1;
   List<List<String>> data = [
     ['','1','2','3','4','5','6','7','8','9','10'],
     ['A','A1','A2','A3','A4','A5','A6','A7','A8','A9','A10'],
@@ -19,30 +25,114 @@ class TableScreen extends StatelessWidget {
     ['J','J1','J2','J3','J4','J5','J6','J7','J8','J9','J10'],
   ];
 
-  TextEditingController _searchText;
+  TextEditingController _searchText = TextEditingController();
+
+  @override
+  void dispose() {
+    _searchText.dispose();
+    super.dispose();
+  }
+
 
   @override
   Widget build(BuildContext context) {
+    var grid = GridView.builder(
+      scrollDirection: Axis.vertical,
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: data.length,
+      ),
+      itemBuilder: _tableItems,
+
+      itemCount: data.length * data.length,
+    );
+
     return Scaffold(
-      key: _scaffoldKey,
+      key: TableScreen._scaffoldKey,
       appBar: AppBar(
         title: Text('Table'),
         elevation: 5.0,
         brightness: Brightness.dark,
       ),
-      body: Container(
-        height: 400.0,
-        padding:  EdgeInsets.all(5.0),
-        margin:  EdgeInsets.all(5.0),
-        decoration: BoxDecoration(
-            border: Border.all(color: Colors.black, width: 2.0)
-        ),
-        child: GridView.builder(
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: data.length,
-          ),
-          itemBuilder: _tableItems,
-          itemCount: data.length * data.length,
+      body: SingleChildScrollView(
+        child: Column(
+          children: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.max,
+              children: <Widget>[
+                Container(
+                  height: 30.0,
+                  width: 100.0,
+                  child: TextField(
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintText: 'Search',
+                      hintStyle: TextStyle(
+                        fontSize: 20.0,
+                        color: Colors.grey,
+                        fontWeight: FontWeight.bold,
+                      )
+                    ),
+                    controller: _searchText,
+                    style: TextStyle(
+                      fontSize: 20.0,
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                GestureDetector(
+                  onTap: (){
+                    int i,j,found=0;
+                    for (i=1;  i<data.length;  i++) {
+                      for(j=1;  j<data[i].length;  j++){
+                        if(data[i][j].compareTo(_searchText.text)== 0){
+                          TableScreen._scaffoldKey.currentState.showSnackBar( SnackBar(
+                            content: Text('Found : ${data[i][j]}'),
+                            duration: Duration(seconds: 1),
+                          ));
+                          found=1;
+                          row=i;col=j;
+                          break;
+                        }
+                      }
+                  }
+                    if(found==0){
+                      TableScreen._scaffoldKey.currentState.showSnackBar( SnackBar(
+                        content: Text('Not found'),
+                        duration: Duration(seconds: 1),
+                      ));
+                      row=-1;col=-1;
+                    }
+                    setState(() {});
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 20.0),
+                    child: Icon(Icons.search,color: Colors.blueAccent, size: 40.0,),
+                  ),
+                ),
+              ],
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 50.0),
+              child: Container(
+                height: 405.0,
+                padding:  EdgeInsets.all(5.0),
+                margin:  EdgeInsets.all(5.0),
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.black, width: 2.0)
+                ),
+                child: GridView.builder(
+                  scrollDirection: Axis.vertical,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: data.length,
+                  ),
+                  itemBuilder: _tableItems,
+                  itemCount: data.length * data.length,
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -50,6 +140,7 @@ class TableScreen extends StatelessWidget {
 
   Widget _tableItems(BuildContext context, int index) {
     int x, y = 0;
+
     x = (index / data.length).floor();
     y = (index % data.length);
     return GestureDetector(
@@ -66,10 +157,11 @@ class TableScreen extends StatelessWidget {
       ),
     );
   }
+
   Widget _tableItem(int x, int y) {
      return Container(
       decoration: BoxDecoration(
-        color: Colors.lightBlueAccent[100],
+        color: (x==row &&y==col)?Colors.yellow:Colors.lightBlueAccent[100],
         border: Border.all(width: 2.0),
       ),
       height: 35.0,
@@ -82,11 +174,12 @@ class TableScreen extends StatelessWidget {
         ),
       ),
     );
+
   }
 
   _gridItemTapped(int x, int y) {
 
-    _scaffoldKey.currentState.showSnackBar( SnackBar(
+    TableScreen._scaffoldKey.currentState.showSnackBar( SnackBar(
       content: Text('Clicked : ${data[x][y]}'),
       duration: Duration(seconds: 1),
     ));

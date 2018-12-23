@@ -16,7 +16,7 @@ class HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     Timer(
-        Duration(seconds: 0),
+        Duration(seconds: 2),
             () {
             Navigator.of(context).pushReplacementNamed('/TableScreen');
         }
